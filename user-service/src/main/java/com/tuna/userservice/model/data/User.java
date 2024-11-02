@@ -1,12 +1,14 @@
 package com.tuna.userservice.model.data;
 
-import jakarta.annotation.Nullable;
+import com.tuna.userservice.validation.Unique;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Date;
-import java.util.ArrayList;
 @Getter
 @Setter
 @Entity
@@ -15,33 +17,18 @@ public class User {
     @Id
     @GeneratedValue
     private int id;
+    @Size(min = 2, message = "Name should have at least 2 characters")
     private String firstName;
+    @Size(min = 2, message = "Name should have at least 2 characters")
     private String lastName;
+    @Size(min = 3, message = "Name should have at least 3 characters")
+//    @Unique(message = "This username is already taken")
+    private String userName;
+    @Email(message = "Not a properly formatted email address")
     private String email;
-    private String password;
+    @Past(message = "Birthdate should be in the past")
     private Date birthDate;
     private Date registrationDate;
-    @ElementCollection
-    private ArrayList<Integer> posts;
-    @ElementCollection
-    private ArrayList<Integer> savedPosts;
-    @ElementCollection
-    private ArrayList<Integer> likes;
-    @ElementCollection
-    private ArrayList<Integer> followers;
-    @ElementCollection
-    private ArrayList<Integer> following;
-
-
 
     public User() {}
-
-    public User(String firstName, String lastName, String email, String password, Date birthDate, Date registrationDate) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.birthDate = birthDate;
-        this.registrationDate = registrationDate;
-    }
 }

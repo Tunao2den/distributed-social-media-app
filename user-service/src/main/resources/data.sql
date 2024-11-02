@@ -1,4 +1,4 @@
-INSERT INTO social_user (birth_date, email, first_name, last_name, password, registration_date, id)
+INSERT INTO social_user (birth_date, email, first_name, last_name, user_name, registration_date, id)
 VALUES
     ('1990-03-15', 'janesmith@example.com', 'Jane', 'Smith', 'passwordSecure456', '2023-01-20', 1002),
     ('1985-07-20', 'bobjones@example.com', 'Bob', 'Jones', 'safePassword789', '2023-02-15', 1003),

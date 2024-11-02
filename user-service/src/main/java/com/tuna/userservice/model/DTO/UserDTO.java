@@ -1,6 +1,10 @@
 package com.tuna.userservice.model.DTO;
 
 import com.tuna.userservice.model.data.User;
+import com.tuna.userservice.validation.Unique;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,26 +16,10 @@ import java.time.LocalDate;
 public class UserDTO {
     private String firstName;
     private String lastName;
+    private String userName;
     private String email;
     private String password;
     private Date birthDate;
 
     public UserDTO() {}
-
-    public User toUser(UserDTO userDTO) {
-        User user = new User();
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setEmail(userDTO.getEmail());
-        user.setPassword(userDTO.getPassword());
-        user.setBirthDate(userDTO.getBirthDate());
-        user.setRegistrationDate(Date.valueOf(LocalDate.now()));
-        user.setPosts(null);
-        user.setSavedPosts(null);
-        user.setLikes(null);
-        user.setFollowers(null);
-        user.setFollowing(null);
-
-        return user;
-    }
 }

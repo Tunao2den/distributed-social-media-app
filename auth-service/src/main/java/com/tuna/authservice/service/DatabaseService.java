@@ -12,7 +12,13 @@ public class DatabaseService {
         this.authServiceRepository = authServiceRepository;
     }
 
-    public void saveNewUser(AuthUser authUser) {
-        authServiceRepository.save(authUser);
+    public boolean saveNewUser(AuthUser authUser) {
+        try {
+            authServiceRepository.save(authUser);
+            return true;
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 }
