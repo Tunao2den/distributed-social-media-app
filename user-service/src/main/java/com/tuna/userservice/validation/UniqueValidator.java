@@ -1,13 +1,17 @@
 package com.tuna.userservice.validation;
 
+import com.tuna.userservice.context.ContextProvider;
 import com.tuna.userservice.repository.UserRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
+@NoArgsConstructor
 public class UniqueValidator implements ConstraintValidator<Unique, String> {
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
     public UniqueValidator(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -15,6 +19,7 @@ public class UniqueValidator implements ConstraintValidator<Unique, String> {
 
     @Override
     public void initialize(Unique constraintAnnotation) {
+        this.userRepository = (UserRepository) ContextProvider.getBean(UserRepository.class);
     }
 
     @Override

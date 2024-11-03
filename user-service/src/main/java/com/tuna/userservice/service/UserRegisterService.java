@@ -43,6 +43,7 @@ public class UserRegisterService {
 
         //if fields are valid then send it to auth service
 
+
         //if auth service successfully save data, call userRepository.save(user);
 
         AuthUser authUser = authUserMapper.toAuthUser(userDTO);
