@@ -1,7 +1,6 @@
 package com.tuna.userservice.model.DTO;
 
 import com.tuna.userservice.model.data.User;
-import com.tuna.userservice.validation.Unique;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;

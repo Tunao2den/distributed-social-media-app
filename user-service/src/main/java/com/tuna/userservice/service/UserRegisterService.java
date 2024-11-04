@@ -3,15 +3,16 @@ package com.tuna.userservice.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tuna.userservice.exception.CustomException;
-import com.tuna.userservice.exception.CustomExceptionHandler;
 import com.tuna.userservice.model.DTO.UserDTO;
 import com.tuna.userservice.model.data.AuthUser;
 import com.tuna.userservice.model.data.User;
 import com.tuna.userservice.model.mapper.AuthUserMapper;
 import com.tuna.userservice.model.mapper.UserDTOMapper;
 import com.tuna.userservice.repository.UserRepository;
-import jakarta.validation.Valid;
+import jakarta.transaction.Transactional;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class UserRegisterService {
@@ -19,37 +20,37 @@ public class UserRegisterService {
     private final AuthUserMapper authUserMapper;
     private final UserDTOMapper userDTOMapper;
     private final ObjectMapper objectMapper;
-    private ValidationService<User> validationService;
+    private final RestTemplate restTemplate;
 
     public UserRegisterService(UserRepository userRepository,
                                AuthUserMapper authUserMapper,
                                UserDTOMapper userDTOMapper,
                                ObjectMapper objectMapper,
-                               ValidationService<User> validationService) {
+                               RestTemplate restTemplate) {
         this.userRepository = userRepository;
         this.authUserMapper = authUserMapper;
         this.userDTOMapper = userDTOMapper;
         this.objectMapper = objectMapper;
-        this.validationService = validationService;
+        this.restTemplate = restTemplate;
     }
 
+
+    @Transactional
     public User registerUser(UserDTO userDTO) throws JsonProcessingException {
         User user = userDTOMapper.toUser(userDTO);
-        //return ex if fields are not valid
-        var validationSet = validationService.validate(user);
-        if (!validationSet.isEmpty()){
-            throw new CustomException(validationSet.toString());
+        if (userRepository.existsByUserName(user.getUserName())) {
+            throw new CustomException("This username is already taken");
         }
-
-        //if fields are valid then send it to auth service
-
-
-        //if auth service successfully save data, call userRepository.save(user);
+        userRepository.save(user);
 
         AuthUser authUser = authUserMapper.toAuthUser(userDTO);
         String authUserJson = objectMapper.writeValueAsString(authUser);
+        String url = "http://localhost:8000/auth/receive-user";
+        ResponseEntity<Boolean> response =restTemplate.postForEntity(url, authUserJson, Boolean.class);
+        if (Boolean.FALSE.equals(response.getBody())) {
+            throw new CustomException("Auth server could not handle the data");
+        }
 
         return user;
     }
-
 }

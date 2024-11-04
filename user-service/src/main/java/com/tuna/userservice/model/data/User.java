@@ -1,6 +1,5 @@
 package com.tuna.userservice.model.data;
 
-import com.tuna.userservice.validation.Unique;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Past;
@@ -22,7 +21,6 @@ public class User {
     @Size(min = 2, message = "Name should have at least 2 characters")
     private String lastName;
     @Size(min = 3, message = "Name should have at least 3 characters")
-    @Unique(message = "This username is already taken")
     private String userName;
     @Email(message = "Not a properly formatted email address")
     private String email;

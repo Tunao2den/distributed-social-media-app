@@ -13,7 +13,6 @@ import jakarta.validation.ValidatorFactory;
 
 @Component
 public class ValidationService<T> {
-
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 
     private final Validator validator = factory.getValidator();

@@ -1,6 +1,7 @@
 package com.tuna.authservice.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,9 +11,9 @@ import lombok.Setter;
 @Entity
 public class AuthUser {
     @Id
+    @GeneratedValue
     private Integer id;
-    private String firstName;
-    private String lastName;
+    private String userName;
     private String email;
     private String password;
 
