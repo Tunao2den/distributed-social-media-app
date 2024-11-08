@@ -1,4 +1,4 @@
-package com.tuna.userservice.model.data;
+package com.tuna.userservice.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -7,12 +7,13 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Entity
 @Table(name = "Social_User")
-public class User {
+public class Users {
     @Id
     @GeneratedValue
     private int id;
@@ -25,8 +26,8 @@ public class User {
     @Email(message = "Not a properly formatted email address")
     private String email;
     @Past(message = "Birthdate should be in the past")
-    private Date birthDate;
-    private Date registrationDate;
+    private LocalDateTime birthDate;
+    private LocalDateTime registrationDate;
 
-    public User() {}
+    public Users() {}
 }

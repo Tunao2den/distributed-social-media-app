@@ -1,8 +1,8 @@
 package com.tuna.userservice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.tuna.userservice.model.DTO.UserDTO;
-import com.tuna.userservice.model.data.User;
+import com.tuna.userservice.payload.request.UserRequest;
+import com.tuna.userservice.model.entity.Users;
 import com.tuna.userservice.service.UserRegisterService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +17,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User registerUser(@RequestBody UserDTO userDTO) throws JsonProcessingException {
-        return userRegisterService.registerUser(userDTO);
+    public Users registerUser(@RequestBody UserRequest userRequest) throws JsonProcessingException {
+        return userRegisterService.registerUser(userRequest);
     }
 }

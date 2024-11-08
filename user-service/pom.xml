@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.tuna</groupId>
-    <artifactId>user-service</artifactId>
+    <artifactId>users-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>user-service</name>
-    <description>user-service</description>
+    <name>users-service</name>
+    <description>users-service</description>
     <url/>
     <licenses>
         <license/>

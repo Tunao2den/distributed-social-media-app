@@ -1,8 +1,5 @@
 package com.tuna.authservice.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tuna.authservice.model.AuthUser;
 import com.tuna.authservice.service.DatabaseService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
