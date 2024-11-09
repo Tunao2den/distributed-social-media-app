@@ -45,8 +45,7 @@ public class UserRegisterService {
 
         AuthUser authUser = authUserMapper.toAuthUser(userRequest);
         String authUserJson = objectMapper.writeValueAsString(authUser);
-        // TODO: 9.11.2024 uri will be dynamic via eureka
-        String url = "http://localhost:8000/auth/receive-user";
+        String url = "http://auth-service/auth-service/receive-user";
         ResponseEntity<Boolean> response =restTemplate.postForEntity(url, authUserJson, Boolean.class);
         if (Boolean.FALSE.equals(response.getBody())) {
             throw new CustomException("Auth server could not handle the data");
