@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - name: AuthenticationFilter
+      routes:
+        - id: users-service
+          uri: lb://users-service
+          predicates:
+            - Path=/users-service/**
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth-service/**
