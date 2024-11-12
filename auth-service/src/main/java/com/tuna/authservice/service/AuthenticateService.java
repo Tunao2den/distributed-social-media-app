@@ -26,8 +26,9 @@ public class AuthenticateService {
         }
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String authHeader) {
         try {
+            String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
             jwtService.validateToken(token);
             return true;
         } catch (Exception e) {

@@ -22,6 +22,6 @@ public class UserInfoUserDetailsService implements UserDetailsService {
         Optional<AuthUser> authUser = authServiceRepository.findByUserName(username);
 
         return authUser.map(AuthUserDetails::new)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found" + username));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 }

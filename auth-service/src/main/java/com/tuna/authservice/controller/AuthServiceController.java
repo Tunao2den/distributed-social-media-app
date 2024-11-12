@@ -34,8 +34,7 @@ public class AuthServiceController {
     }
 
     @PostMapping("/validate-token")
-    public boolean validateToken(@RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
+    public boolean validateToken(@RequestHeader("Authorization") String token) {
         return authenticateService.validateToken(token);
     }
 }
