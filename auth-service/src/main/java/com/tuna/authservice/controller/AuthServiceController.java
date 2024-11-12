@@ -24,8 +24,7 @@ public class AuthServiceController {
 
     @PostMapping("/receive-user")
     public ResponseEntity<Boolean> saveUser(@RequestBody String jsonUserData) {
-        boolean isSaved = databaseService.saveNewUser(jsonUserData);
-        return ResponseEntity.ok(isSaved);
+        return ResponseEntity.ok(databaseService.saveNewUser(jsonUserData));
     }
 
     @PostMapping("/generate-token")
@@ -34,7 +33,7 @@ public class AuthServiceController {
     }
 
     @PostMapping("/validate-token")
-    public boolean validateToken(@RequestHeader("Authorization") String token) {
-        return authenticateService.validateToken(token);
+    public ResponseEntity<Boolean> validateToken(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(authenticateService.validateToken(token));
     }
 }
