@@ -45,6 +45,7 @@ public class UserRegisterService {
 
         AuthUser authUser = authUserMapper.toAuthUser(userRequest);
         String authUserJson = objectMapper.writeValueAsString(authUser);
+        // TODO: 12.11.2024 refactor the naming server to fix the path
         String url = "http://auth-service/auth-service/receive-user";
         ResponseEntity<Boolean> response =restTemplate.postForEntity(url, authUserJson, Boolean.class);
         if (Boolean.FALSE.equals(response.getBody())) {
