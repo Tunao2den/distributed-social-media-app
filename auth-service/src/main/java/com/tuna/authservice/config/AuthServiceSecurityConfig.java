@@ -41,7 +41,11 @@ public class AuthServiceSecurityConfig {
                             return corsConfig;
                         }))
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/","/h2-console/**", "/auth-service/test", "/auth-service/receive-user", "/auth-service/generate-token", "/auth-service/validate-token")
+                        .requestMatchers("/", "/h2-console/**",
+                                "/auth-service/test",
+                                "/auth-service/receive-user",
+                                "/auth-service/login",
+                                "/auth-service/validate-token")
                         .permitAll()
                         .requestMatchers(PathRequest.toH2Console())
                         .permitAll()

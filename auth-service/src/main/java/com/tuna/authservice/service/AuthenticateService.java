@@ -1,6 +1,7 @@
 package com.tuna.authservice.service;
 
 import com.tuna.authservice.payload.request.AuthRequest;
+import com.tuna.authservice.payload.response.ValidateTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,9 +27,8 @@ public class AuthenticateService {
         }
     }
 
-    public boolean validateToken(String authHeader) {
+    private boolean validateToken(String token) {
         try {
-            String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
             jwtService.validateToken(token);
             return true;
         } catch (Exception e) {
@@ -36,4 +36,13 @@ public class AuthenticateService {
             return false;
         }
     }
+
+    public ValidateTokenResponse validateTokenAndExtractUsername(String authHeader) {
+        String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
+        boolean isValid = validateToken(token);
+        String userName = jwtService.getSubjectFromToken(token);
+        return new ValidateTokenResponse(isValid, userName);
+    }
+
+    // TODO: 13.11.2024 add refresh token
 }

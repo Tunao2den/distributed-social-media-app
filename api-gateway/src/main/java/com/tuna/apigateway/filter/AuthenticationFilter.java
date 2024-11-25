@@ -1,11 +1,13 @@
 package com.tuna.apigateway.filter;
 
+import com.tuna.apigateway.model.data.ValidateTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
@@ -26,7 +28,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     @Override
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
-            if (routeValidator.isSecured.test(exchange.getRequest())){
+            if (routeValidator.isSecured.test(exchange.getRequest())) {
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                     throw new RuntimeException("Authorization head is not found");
                 }
@@ -38,17 +40,23 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                         .uri(url)
                         .header(HttpHeaders.AUTHORIZATION, token)
                         .retrieve()
-                        .bodyToMono(Boolean.class)
-                        .flatMap(body -> {
-                            if (Boolean.FALSE.equals(body)) {
+                        .bodyToMono(ValidateTokenResponse.class)
+                        .flatMap(response -> {
+                            if (!response.isValid()) {
                                 return Mono.error(new RuntimeException("Token is not valid"));
                             }
-                            return chain.filter(exchange);
+
+                            ServerWebExchange updatedExchange = exchange.mutate()
+                                    .request(request -> request.headers(headers -> headers.set("userName", response.getUserName())))
+                                    .build();
+
+                            return chain.filter(updatedExchange);
                         });
             }
             return chain.filter(exchange);
         });
     }
 
-    public static class Config{}
+    public static class Config {
+    }
 }

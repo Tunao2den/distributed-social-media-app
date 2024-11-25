@@ -12,7 +12,7 @@ public class RouteValidator {
             "users-service/register",
 //            "users-service/test",
 //            "auth-service/test",
-            "auth-service/generate-token",
+            "auth-service/login",
             "auth-service/receive-user",
             "auth-service/validate-token",
             "/eureka"

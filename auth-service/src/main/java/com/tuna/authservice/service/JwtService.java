@@ -1,5 +1,6 @@
 package com.tuna.authservice.service;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -31,13 +32,24 @@ public class JwtService {
                 .setClaims(claims)
                 .setSubject(userName)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 120))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     private Key getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET.replaceAll("\\s", ""));
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+
+
+    public String getSubjectFromToken(String token) {
+        Claims claims = (Claims) Jwts.parserBuilder()
+                .setSigningKey(getSignKey())
+                .build()
+                .parse(token)
+                .getBody();
+        return claims.getSubject();
     }
 }

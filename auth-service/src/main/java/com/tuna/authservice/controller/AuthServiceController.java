@@ -1,6 +1,7 @@
 package com.tuna.authservice.controller;
 
 import com.tuna.authservice.payload.request.AuthRequest;
+import com.tuna.authservice.payload.response.ValidateTokenResponse;
 import com.tuna.authservice.service.AuthenticateService;
 import com.tuna.authservice.service.DatabaseService;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +28,13 @@ public class AuthServiceController {
         return ResponseEntity.ok(databaseService.saveNewUser(jsonUserData));
     }
 
-    @PostMapping("/generate-token")
-    public String generateToken(@RequestBody AuthRequest authRequest) {
+    @PostMapping("/login")
+    public String loginAndGenerateToken(@RequestBody AuthRequest authRequest) {
         return authenticateService.authenticateUserAndGetToken(authRequest);
     }
 
     @PostMapping("/validate-token")
-    public ResponseEntity<Boolean> validateToken(@RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(authenticateService.validateToken(token));
+    public ResponseEntity<ValidateTokenResponse> validateToken(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(authenticateService.validateTokenAndExtractUsername(token));
     }
 }

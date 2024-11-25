@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tuna.userservice.payload.request.UserRequest;
 import com.tuna.userservice.model.entity.Users;
 import com.tuna.userservice.service.UserRegisterService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,6 +19,11 @@ public class UserController {
     @GetMapping("/test")
     public String test() {
         return "success";
+    }
+
+    @GetMapping("/test-header")
+    public ResponseEntity<String> testHeader(@RequestHeader("userName") String userName) {
+        return ResponseEntity.ok(userName);
     }
 
     @PostMapping("/register")
