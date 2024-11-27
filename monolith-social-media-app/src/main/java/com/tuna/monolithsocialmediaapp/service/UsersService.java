@@ -4,7 +4,6 @@ import com.tuna.monolithsocialmediaapp.model.entity.Users;
 import com.tuna.monolithsocialmediaapp.payload.request.UserRegisterRequest;
 import com.tuna.monolithsocialmediaapp.repository.UsersRepository;
 import jakarta.transaction.Transactional;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
