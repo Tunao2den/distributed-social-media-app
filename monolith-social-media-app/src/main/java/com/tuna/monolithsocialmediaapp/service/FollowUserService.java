@@ -5,6 +5,7 @@ import com.tuna.monolithsocialmediaapp.model.entity.Users;
 import com.tuna.monolithsocialmediaapp.payload.request.FollowUserRequest;
 import com.tuna.monolithsocialmediaapp.repository.FollowUsersRepository;
 import com.tuna.monolithsocialmediaapp.repository.UsersRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,8 @@ public class FollowUserService {
 
     @Autowired
     private UsersRepository usersRepository;
+
+    @Transactional
     public FollowUsers sendFollowRequest(FollowUserRequest followUserRequest) {
         String followerName = followUserRequest.getFollowerName();
         String followedName = followUserRequest.getFollowedName();

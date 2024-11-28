@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MasterPostCategoryRepository extends JpaRepository<MasterPostCategory, Integer> {
-
+    boolean existsByCategory(String category);
 }

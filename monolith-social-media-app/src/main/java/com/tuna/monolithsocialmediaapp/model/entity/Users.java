@@ -39,4 +39,7 @@ public class Users {
     @OneToMany(mappedBy = "followed", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<FollowUsers> followers;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<MasterPost> masterPosts;
 }
