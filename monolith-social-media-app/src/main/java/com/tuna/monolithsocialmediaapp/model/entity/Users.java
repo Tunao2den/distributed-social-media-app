@@ -1,5 +1,6 @@
 package com.tuna.monolithsocialmediaapp.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Entity
+@Entity(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,7 +18,7 @@ public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private int id;
+    private Integer id;
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
@@ -31,5 +33,10 @@ public class Users {
     private LocalDate birthDate;
     @Column(name = "registered_at")
     private LocalDateTime registeredAt;
+    @OneToMany(mappedBy = "follower", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<FollowUsers> followings;
+    @OneToMany(mappedBy = "followed", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<FollowUsers> followers;
 }
-

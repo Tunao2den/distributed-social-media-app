@@ -13,9 +13,11 @@ public class FollowUsers {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "follow_user_id")
-    private int id;
-    @Column(name = "follower_id")
-    private int followerId;
-    @Column(name = "followed_id")
-    private int followedId;
+    private Integer id;
+    @JoinColumn(name = "follower_id")
+    @ManyToOne
+    private Users follower;
+    @JoinColumn(name = "followed_id")
+    @ManyToOne
+    private Users followed;
 }

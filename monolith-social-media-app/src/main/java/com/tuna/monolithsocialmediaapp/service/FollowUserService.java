@@ -8,6 +8,8 @@ import com.tuna.monolithsocialmediaapp.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class FollowUserService {
 
@@ -21,13 +23,14 @@ public class FollowUserService {
         String followedName = followUserRequest.getFollowedName();
         int followerId = usersRepository.findFirstByUserName(followerName).getId();
         int followedId = usersRepository.findFirstByUserName(followedName).getId();
-
+        Optional<Users> followerUser = usersRepository.findById(followerId);
+        Optional<Users> followedUser = usersRepository.findById(followedId);
         if (followUsersRepository.existsByFollowerIdAndFollowedId(followerId, followedId)) {
             throw new RuntimeException(followerName + " is already following " + followedName);
         }
         FollowUsers followUsers = new FollowUsers();
-        followUsers.setFollowerId(followerId);
-        followUsers.setFollowedId(followedId);
+        followUsers.setFollower(followerUser.orElseThrow(() -> new RuntimeException("Follower user not found")));
+        followUsers.setFollowed(followedUser.orElseThrow(() -> new RuntimeException("Follower user not found")));
         return followUsersRepository.save(followUsers);
     }
 }
