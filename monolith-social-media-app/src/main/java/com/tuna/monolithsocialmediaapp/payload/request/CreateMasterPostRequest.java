@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MasterPostCategoryRequest {
-    private String category;
+public class CreateMasterPostRequest {
+    private Integer userId;
+    private Integer masterPostCategoryId;
+    private String content;
 }

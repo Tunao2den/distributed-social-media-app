@@ -1,5 +1,6 @@
 package com.tuna.monolithsocialmediaapp.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,9 +17,11 @@ public class MasterPost {
     private int id;
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private Users user;
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @JsonIgnore
     private MasterPostCategory masterPostCategory;
     @Column(name = "content")
     private String content;

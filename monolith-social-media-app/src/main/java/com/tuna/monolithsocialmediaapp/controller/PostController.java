@@ -1,6 +1,9 @@
 package com.tuna.monolithsocialmediaapp.controller;
 
+import com.tuna.monolithsocialmediaapp.model.entity.MasterPost;
 import com.tuna.monolithsocialmediaapp.model.entity.MasterPostCategory;
+import com.tuna.monolithsocialmediaapp.payload.request.CreateMasterPostRequest;
+import com.tuna.monolithsocialmediaapp.payload.request.MasterPostCategoryRequest;
 import com.tuna.monolithsocialmediaapp.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +22,17 @@ public class PostController {
     }
 
     @PostMapping("/master-post-categories")
-    public MasterPostCategory addNewMasterCategory(@RequestHeader String category) {
+    public MasterPostCategory addNewMasterCategory(@RequestBody MasterPostCategoryRequest category) {
         return postService.addNewCategory(category);
+    }
+
+    @GetMapping("/master-posts")
+    public List<MasterPost> getAllMasterPosts() {
+        return postService.getAllMasterPosts();
+    }
+
+    @PostMapping("/master-posts")
+    public MasterPost addNewMasterPost(@RequestBody CreateMasterPostRequest createMasterPostRequest) {
+        return postService.addNewMasterPost(createMasterPostRequest);
     }
 }
