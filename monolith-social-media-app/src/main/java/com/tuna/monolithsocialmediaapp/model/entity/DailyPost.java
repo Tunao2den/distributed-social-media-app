@@ -9,27 +9,25 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "master_post")
+@Table(name = "daily_post")
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-public class MasterPost {
+public class DailyPost {
     @Id
-    @GeneratedValue
-    @Column(name = "master_post_id")
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "daily_post_id")
+    private Integer id;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private Users user;
+    private Users users;
     @ManyToOne
-    @JoinColumn(name = "category_id")
     @JsonIgnore
-    private MasterPostCategory masterPostCategory;
+    @JoinColumn(name = "master_post_id")
+    private MasterPost masterPost;
     @Column(name = "content")
     private String content;
-    @Column(name = "current_streak")
-    private Integer currentStreak;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 }

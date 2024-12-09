@@ -2,13 +2,16 @@ package com.tuna.monolithsocialmediaapp.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
-@Entity(name = "master_post_category")
-@Data
+@Entity
+@Table(name = "master_post_category")
+@Getter
+@Setter
 @NoArgsConstructor
 public class MasterPostCategory {
     @Id

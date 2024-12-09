@@ -1,14 +1,15 @@
 package com.tuna.monolithsocialmediaapp.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Entity(name = "follow_users")
-@Data
+@Entity
+@Table(name = "follow_users")
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class FollowUsers {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

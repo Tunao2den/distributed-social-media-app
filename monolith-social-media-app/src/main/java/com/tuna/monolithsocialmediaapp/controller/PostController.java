@@ -1,5 +1,6 @@
 package com.tuna.monolithsocialmediaapp.controller;
 
+import com.tuna.monolithsocialmediaapp.model.entity.DailyPost;
 import com.tuna.monolithsocialmediaapp.model.entity.MasterPost;
 import com.tuna.monolithsocialmediaapp.model.entity.MasterPostCategory;
 import com.tuna.monolithsocialmediaapp.payload.request.CreateMasterPostRequest;
@@ -34,5 +35,10 @@ public class PostController {
     @PostMapping("/master-posts")
     public MasterPost addNewMasterPost(@RequestBody CreateMasterPostRequest createMasterPostRequest) {
         return postService.addNewMasterPost(createMasterPostRequest);
+    }
+
+    @GetMapping("/daily-posts")
+    public List<DailyPost> getAllDailyPosts() {
+        return postService.getAllDailyPosts();
     }
 }
