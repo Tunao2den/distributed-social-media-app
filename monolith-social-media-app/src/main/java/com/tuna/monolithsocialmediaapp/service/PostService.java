@@ -4,6 +4,7 @@ import com.tuna.monolithsocialmediaapp.model.entity.DailyPost;
 import com.tuna.monolithsocialmediaapp.model.entity.MasterPost;
 import com.tuna.monolithsocialmediaapp.model.entity.MasterPostCategory;
 import com.tuna.monolithsocialmediaapp.model.entity.Users;
+import com.tuna.monolithsocialmediaapp.payload.request.CreateDailyPostRequest;
 import com.tuna.monolithsocialmediaapp.payload.request.CreateMasterPostRequest;
 import com.tuna.monolithsocialmediaapp.payload.request.MasterPostCategoryRequest;
 import com.tuna.monolithsocialmediaapp.repository.DailyPostRepository;
@@ -13,9 +14,11 @@ import com.tuna.monolithsocialmediaapp.repository.UsersRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostService {
@@ -108,7 +111,54 @@ public class PostService {
         return masterPostRepository.save(masterPost);
     }
 
+    public MasterPost getMasterPostByUsernameAndMasterPostId(String userName, Integer masterPostId) {
+        Users user = usersRepository.findFirstByUserName(userName);
+        if (user == null) {
+            throw new RuntimeException("User not found with username: " + userName);
+        }
+        MasterPost masterPost = masterPostRepository.findByUserAndAndId(user, masterPostId);
+        if (masterPost == null) {
+            throw new RuntimeException("Post not found");
+        }
+        return masterPost;
+    }
+
     public List<DailyPost> getAllDailyPosts() {
         return dailyPostRepository.findAll();
+    }
+
+    public List<DailyPost> getUsersAllDailyPostsByMasterPost(String userName, Integer masterPostId) {
+        Users user = usersRepository.findByUserName(userName);
+        Optional<MasterPost> masterPost = masterPostRepository.findById(masterPostId);
+        if (masterPost.isEmpty()) {
+            throw new RuntimeException("Master post could not found with id: " + masterPostId);
+        }
+        return dailyPostRepository.findByUsersAndMasterPost(user, masterPost.get());
+    }
+
+    public DailyPost addNewDailyPostToUser(String userName, Integer masterPostId, CreateDailyPostRequest createDailyPostRequest) {
+        Users user = usersRepository.findByUserName(userName);
+        Optional<MasterPost> masterPost = masterPostRepository.findById(masterPostId);
+        if (masterPost.isEmpty()) {
+            throw new RuntimeException("Master post could not found with id: " + masterPostId);
+        }
+        if (!masterPost.get().getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Master post does not belong to user: " + userName);
+        }
+        DailyPost dailyPost = new DailyPost();
+        dailyPost.setUsers(user);
+        dailyPost.setMasterPost(masterPost.get());
+        dailyPost.setContent(createDailyPostRequest.getContent());
+        dailyPost.setCreatedAt(LocalDateTime.now());
+        return dailyPostRepository.save(dailyPost);
+    }
+
+    public DailyPost getDailyPostByUsernameAndMasterPostIdAndDailyPostId(String userName, Integer masterPostId, Integer dailyPostId) {
+        Users user = usersRepository.findByUserName(userName);
+        Optional<MasterPost> masterPost = masterPostRepository.findById(masterPostId);
+        if (masterPost.isEmpty()) {
+            throw new RuntimeException("Master post could not found with id: " + masterPostId);
+        }
+        return dailyPostRepository.getDailyPostByUsersAndMasterPostAndId(user, masterPost.get(), dailyPostId);
     }
 }

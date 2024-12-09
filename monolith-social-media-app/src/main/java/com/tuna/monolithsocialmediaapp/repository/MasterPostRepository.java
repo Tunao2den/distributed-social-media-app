@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface MasterPostRepository extends JpaRepository<MasterPost, Integer> {
     List<MasterPost> findByUser(Users users);
+
+    MasterPost findByUserAndAndId(Users user, Integer id);
 }
