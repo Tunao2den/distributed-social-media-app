@@ -1,7 +1,9 @@
 package com.tuna.monolithsocialmediaapp.controller;
 
 import com.tuna.monolithsocialmediaapp.model.entity.DailyPost;
+import com.tuna.monolithsocialmediaapp.model.entity.DailyPostComment;
 import com.tuna.monolithsocialmediaapp.model.entity.MasterPost;
+import com.tuna.monolithsocialmediaapp.payload.request.CreateCommentRequest;
 import com.tuna.monolithsocialmediaapp.payload.request.CreateDailyPostRequest;
 import com.tuna.monolithsocialmediaapp.payload.request.CreateMasterPostRequest;
 import com.tuna.monolithsocialmediaapp.service.PostService;
@@ -47,5 +49,20 @@ public class UserPostController {
     public DailyPost getDailyPostByUsernameAndMasterPostIdAndDailyPostId(
             @PathVariable String userName, @PathVariable Integer masterPostId, @PathVariable Integer dailyPostId) {
         return postService.getDailyPostByUsernameAndMasterPostIdAndDailyPostId(userName, masterPostId, dailyPostId);
+    }
+
+    @GetMapping("/master-posts/{masterPostId}/daily-posts/{dailyPostId}/comments")
+    public List<DailyPostComment> getCommentsByPost(@PathVariable Integer dailyPostId) {
+        return postService.getCommentsByDailyPost(dailyPostId);
+    }
+
+    @GetMapping("/master-posts/{masterPostId}/daily-posts/{dailyPostId}/comments/{dailyPostCommentId}")
+    public DailyPostComment getCommentById(@PathVariable Integer dailyPostCommentId) {
+        return postService.getCommentById(dailyPostCommentId);
+    }
+
+    @PostMapping("/master-posts/{masterPostId}/daily-posts/{dailyPostId}/comments")
+    public DailyPostComment addNewComment(@RequestBody CreateCommentRequest createCommentRequest, @PathVariable Integer dailyPostId) {
+        return postService.createCommentByUser(createCommentRequest, dailyPostId);
     }
 }

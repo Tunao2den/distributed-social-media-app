@@ -42,4 +42,7 @@ public class Users {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<MasterPost> masterPosts;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<DailyPostComment> comments;
 }

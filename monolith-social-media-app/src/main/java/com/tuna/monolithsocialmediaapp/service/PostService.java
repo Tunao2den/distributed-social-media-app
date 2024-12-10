@@ -1,16 +1,11 @@
 package com.tuna.monolithsocialmediaapp.service;
 
-import com.tuna.monolithsocialmediaapp.model.entity.DailyPost;
-import com.tuna.monolithsocialmediaapp.model.entity.MasterPost;
-import com.tuna.monolithsocialmediaapp.model.entity.MasterPostCategory;
-import com.tuna.monolithsocialmediaapp.model.entity.Users;
+import com.tuna.monolithsocialmediaapp.model.entity.*;
+import com.tuna.monolithsocialmediaapp.payload.request.CreateCommentRequest;
 import com.tuna.monolithsocialmediaapp.payload.request.CreateDailyPostRequest;
 import com.tuna.monolithsocialmediaapp.payload.request.CreateMasterPostRequest;
 import com.tuna.monolithsocialmediaapp.payload.request.MasterPostCategoryRequest;
-import com.tuna.monolithsocialmediaapp.repository.DailyPostRepository;
-import com.tuna.monolithsocialmediaapp.repository.MasterPostCategoryRepository;
-import com.tuna.monolithsocialmediaapp.repository.MasterPostRepository;
-import com.tuna.monolithsocialmediaapp.repository.UsersRepository;
+import com.tuna.monolithsocialmediaapp.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +29,9 @@ public class PostService {
 
     @Autowired
     private DailyPostRepository dailyPostRepository;
+
+    @Autowired
+    private DailyPostCommentRepository dailyPostCommentRepository;
 
     public List<MasterPostCategory> getAllCategories() {
         return masterPostCategoryRepository.findAll();
@@ -160,5 +158,35 @@ public class PostService {
             throw new RuntimeException("Master post could not found with id: " + masterPostId);
         }
         return dailyPostRepository.getDailyPostByUsersAndMasterPostAndId(user, masterPost.get(), dailyPostId);
+    }
+
+    public DailyPostComment createCommentByUser(CreateCommentRequest createCommentRequest, Integer dailyPostId) {
+        Optional<DailyPost> dailyPost = dailyPostRepository.findById(dailyPostId);
+        Optional<Users> user = usersRepository.findById(createCommentRequest.getUserId());
+        if (user.isEmpty() || dailyPost.isEmpty()) {
+            throw new RuntimeException("User or daily post not found");
+        }
+        DailyPostComment dailyPostComment = new DailyPostComment();
+        dailyPostComment.setUser(user.get());
+        dailyPostComment.setDailyPost(dailyPost.get());
+        dailyPostComment.setContent(createCommentRequest.getContent());
+        dailyPostComment.setCreatedAt(LocalDateTime.now());
+        return dailyPostCommentRepository.save(dailyPostComment);
+    }
+
+    public List<DailyPostComment> getCommentsByDailyPost(Integer dailyPostId) {
+        Optional<DailyPost> dailyPost = dailyPostRepository.findById(dailyPostId);
+        if (dailyPost.isEmpty()) {
+            throw new RuntimeException("Daily post not found");
+        }
+        return dailyPostCommentRepository.findAllByDailyPost(dailyPost.get());
+    }
+
+    public DailyPostComment getCommentById(Integer dailyPostCommentId) {
+        Optional<DailyPostComment> dailyPostComment = dailyPostCommentRepository.findById(dailyPostCommentId);
+        if (dailyPostComment.isEmpty()) {
+            throw new RuntimeException("Comment not found");
+        }
+        return dailyPostComment.get();
     }
 }
