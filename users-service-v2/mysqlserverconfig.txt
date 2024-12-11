@@ -1,0 +1,22 @@
+docker run --detach
+--env MYSQL_ROOT_PASSWORD=root123
+--env MYSQL_USER=dev-users-service
+--env MYSQL_PASSWORD=dev123
+--env MYSQL_DATABASE=users-database
+--name users-mysql-server
+--publish 3307:3306 mysql:8-oracle
+
+
+create table users
+(
+    user_id       BIGINT auto_increment,
+    first_name    varchar(255) not null,
+    last_name     varchar(255) not null,
+    user_name     varchar(255) not null,
+    email         varchar(255) not null,
+    password      varchar(255) not null,
+    birthdate     date         null,
+    registered_at timestamp    null,
+    constraint users_pk
+        primary key (user_id)
+);
