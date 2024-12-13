@@ -58,4 +58,9 @@ public class UsersController {
     public ResponseEntity<?> getFollowed(@RequestBody UserInfoRequest userInfoRequest) {
         return usersService.getFollowedUsers(userInfoRequest);
     }
+
+    @GetMapping("/recommendations")
+    public ResponseEntity<?> recommendUsers(@RequestBody UserInfoRequest userInfoRequest) {
+        return usersService.recommendUsers(userInfoRequest);
+    }
 }

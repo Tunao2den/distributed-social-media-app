@@ -1,5 +1,6 @@
 package com.tuna.usersservice.service;
 
+import com.tuna.usersservice.model.dto.FollowingUserDTO;
 import com.tuna.usersservice.model.entity.FollowUsers;
 import com.tuna.usersservice.model.entity.Users;
 import com.tuna.usersservice.payload.request.FollowUserRequest;
@@ -114,5 +115,19 @@ public class UsersService {
             return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
         }
         return ResponseEntity.ok(usersRepository.findFollowedUsersById(userInfoRequest.getId()));
+    }
+
+    public ResponseEntity<?> recommendUsers(UserInfoRequest userInfoRequest) {
+        Integer id = userInfoRequest.getId();
+        List<Integer> mutualFollowedIds = followUsersRepository.findMutualFollowingIds(id);
+        List<Users> mutualFollowedUsersFollowings = followUsersRepository.findFollowedUsers(mutualFollowedIds);
+        List<Integer> alreadyFollowingUserIds = followUsersRepository.findAlreadyFollowingUserIds(id);
+
+        List<FollowingUserDTO> recommendedUserDTOs = mutualFollowedUsersFollowings.stream()
+                .filter(user -> !alreadyFollowingUserIds.contains(user.getId()) && !user.getId().equals(id))
+                .map(user -> new FollowingUserDTO(user.getId(), user.getUserName(), user.getFirstName(), user.getLastName()))
+                .toList();
+
+        return ResponseEntity.ok(recommendedUserDTOs);
     }
 }
