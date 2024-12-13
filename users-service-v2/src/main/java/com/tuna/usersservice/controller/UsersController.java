@@ -1,8 +1,10 @@
 package com.tuna.usersservice.controller;
 
 import com.tuna.usersservice.model.entity.Users;
+import com.tuna.usersservice.payload.request.FollowUserRequest;
 import com.tuna.usersservice.payload.request.LoginRequest;
 import com.tuna.usersservice.payload.request.RegisterRequest;
+import com.tuna.usersservice.payload.request.UserInfoRequest;
 import com.tuna.usersservice.service.UsersService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,5 +42,20 @@ public class UsersController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         return usersService.loginUser(loginRequest);
+    }
+
+    @PostMapping("/follow-user")
+    public ResponseEntity<?> follow(@Valid @RequestBody FollowUserRequest followUserRequest) {
+        return usersService.sendFollowRequest(followUserRequest);
+    }
+
+    @GetMapping("/followers")
+    public ResponseEntity<?> getFollowers(@RequestBody UserInfoRequest userInfoRequest) {
+        return usersService.getFollowers(userInfoRequest);
+    }
+
+    @GetMapping("/followed")
+    public ResponseEntity<?> getFollowed(@RequestBody UserInfoRequest userInfoRequest) {
+        return usersService.getFollowedUsers(userInfoRequest);
     }
 }

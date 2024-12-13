@@ -1,5 +1,6 @@
 package com.tuna.usersservice.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -34,4 +36,10 @@ public class Users {
     private LocalDate birthDate;
     @Column(name = "registered_at")
     private LocalDateTime registeredAt;
+    @OneToMany(mappedBy = "follower", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<FollowUsers> followings;
+    @OneToMany(mappedBy = "followed", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<FollowUsers> followers;
 }

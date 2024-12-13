@@ -20,3 +20,16 @@ create table users
     constraint users_pk
         primary key (user_id)
 );
+
+create table follow_users
+(
+    follow_users_id bigint auto_increment,
+    follower_id     bigint not null,
+    followed_id     bigint not null,
+    constraint follow_users_pk
+        primary key (follow_users_id),
+    constraint follow_users_users_user_id_fk
+        foreign key (follower_id) references users (user_id),
+    constraint follow_users_users_user_id_fk2
+        foreign key (followed_id) references users (user_id)
+);
