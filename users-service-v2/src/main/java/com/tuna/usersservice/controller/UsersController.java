@@ -1,7 +1,10 @@
 package com.tuna.usersservice.controller;
 
 import com.tuna.usersservice.model.entity.Users;
+import com.tuna.usersservice.payload.request.LoginRequest;
+import com.tuna.usersservice.payload.request.RegisterRequest;
 import com.tuna.usersservice.service.UsersService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,5 +30,15 @@ public class UsersController {
     @GetMapping("/users/{userName}")
     public Users getUser(@PathVariable String userName) {
         return ResponseEntity.ok(usersService.getUserByName(userName)).getBody();
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
+        return usersService.registerUser(registerRequest);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
+        return usersService.loginUser(loginRequest);
     }
 }
