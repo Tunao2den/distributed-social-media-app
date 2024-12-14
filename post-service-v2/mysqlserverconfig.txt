@@ -5,3 +5,53 @@ docker run --detach
 --env MYSQL_DATABASE=post-database
 --name post-mysql-server
 --publish 3308:3306 mysql:8-oracle
+
+create table master_post
+(
+    master_post_id bigint auto_increment,
+    user_id        bigint       not null,
+    category_id    bigint       not null,
+    content        varchar(255) not null,
+    current_streak int          not null,
+    created_at     timestamp    not null,
+    constraint master_post_pk
+        primary key (master_post_id)
+);
+
+create table master_post_category
+(
+    category_id   bigint auto_increment,
+    category_name varchar(255) not null,
+    constraint master_post_category_pk
+        primary key (category_id)
+);
+
+alter table master_post
+    add constraint master_post_category_id_fk
+        foreign key (category_id) references master_post_category (category_id);
+
+create table daily_post
+(
+    daily_post_id  bigint auto_increment,
+    user_id        bigint       not null,
+    master_post_id bigint       not null,
+    content        varchar(255) not null,
+    created_at     timestamp    not null,
+    constraint daily_post_pk
+        primary key (daily_post_id),
+    constraint daily_post_master_post_master_post_id_fk
+        foreign key (master_post_id) references master_post (master_post_id)
+);
+
+create table daily_post_comment
+(
+    daily_post_comment_id bigint auto_increment,
+    user_id               bigint       not null,
+    daily_post_id         bigint       not null,
+    content               varchar(255) not null,
+    created_at            timestamp    not null,
+    constraint daily_post_comment_pk
+        primary key (daily_post_comment_id),
+    constraint daily_post_comment_daily_post_daily_post_id_fk
+        foreign key (daily_post_id) references daily_post (daily_post_id)
+);
