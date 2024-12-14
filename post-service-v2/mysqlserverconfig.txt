@@ -1,0 +1,7 @@
+docker run --detach
+--env MYSQL_ROOT_PASSWORD=root123
+--env MYSQL_USER=dev-posts-service
+--env MYSQL_PASSWORD=dev123
+--env MYSQL_DATABASE=post-database
+--name post-mysql-server
+--publish 3308:3306 mysql:8-oracle
