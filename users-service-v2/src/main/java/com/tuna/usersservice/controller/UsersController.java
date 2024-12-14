@@ -63,4 +63,9 @@ public class UsersController {
     public ResponseEntity<?> recommendUsers(@RequestBody UserInfoRequest userInfoRequest) {
         return usersService.recommendUsers(userInfoRequest);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchUsers(@RequestParam String username) {
+        return usersService.searchUsersByUsername(username);
+    }
 }

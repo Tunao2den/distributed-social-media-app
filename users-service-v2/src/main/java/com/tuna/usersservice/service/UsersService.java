@@ -130,4 +130,8 @@ public class UsersService {
 
         return ResponseEntity.ok(recommendedUserDTOs);
     }
+
+    public ResponseEntity<?> searchUsersByUsername(String username) {
+        return ResponseEntity.ok(usersRepository.searchByUserName(username));
+    }
 }
