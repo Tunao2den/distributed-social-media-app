@@ -1,5 +1,6 @@
 package com.tuna.postservice.controller;
 
+import com.tuna.postservice.payload.request.CreateDailyPostRequest;
 import com.tuna.postservice.payload.request.CreateMasterPostRequest;
 import com.tuna.postservice.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +36,20 @@ public class PostController {
     @GetMapping("/master-posts/{postId}")
     public ResponseEntity<?> getPostByPostId(@PathVariable Integer postId) {
         return postService.findPostByPostId(postId);
+    }
+
+    @PostMapping("/daily-posts")
+    public ResponseEntity<?> createDailyPost(@RequestBody CreateDailyPostRequest createDailyPostRequest) {
+        return postService.createDailyPost(createDailyPostRequest);
+    }
+
+    @GetMapping("/daily-posts-by-user")
+    public ResponseEntity<?> getDailyPosts(@RequestHeader Integer userId) {
+        return postService.getDailyPostsByUserId(userId);
+    }
+
+    @GetMapping("/daily-posts-by-master-post")
+    public ResponseEntity<?> getDailyPostsByMasterPostId(@RequestHeader Integer masterPostId) {
+        return postService.getDailyPostsByMasterPostId(masterPostId);
     }
 }

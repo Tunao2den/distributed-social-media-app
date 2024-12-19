@@ -1,9 +1,12 @@
 package com.tuna.postservice.service;
 
+import com.tuna.postservice.model.entity.DailyPost;
 import com.tuna.postservice.model.entity.MasterPost;
 import com.tuna.postservice.model.entity.MasterPostCategory;
+import com.tuna.postservice.payload.request.CreateDailyPostRequest;
 import com.tuna.postservice.payload.request.CreateMasterPostRequest;
 import com.tuna.postservice.payload.response.MessageResponse;
+import com.tuna.postservice.repository.DailyPostRepository;
 import com.tuna.postservice.repository.MasterPostCategoryRepository;
 import com.tuna.postservice.repository.MasterPostRepository;
 import jakarta.transaction.Transactional;
@@ -21,6 +24,9 @@ public class PostService {
 
     @Autowired
     private MasterPostCategoryRepository masterPostCategoryRepository;
+
+    @Autowired
+    private DailyPostRepository dailyPostRepository;
 
     @Transactional
     public ResponseEntity<?> createMasterPostCategory(String postCategory) {
@@ -59,7 +65,7 @@ public class PostService {
             masterPostRepository.save(masterPost);
             return ResponseEntity.ok(new MessageResponse("Master post created successfully"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Category does not exists"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Could not create the master post"));
         }
     }
 
@@ -69,5 +75,37 @@ public class PostService {
 
     public ResponseEntity<?> findPostByPostId(Integer id) {
         return ResponseEntity.ok(masterPostRepository.findPostById(id));
+    }
+
+    public ResponseEntity<?> createDailyPost(CreateDailyPostRequest createDailyPostRequest) {
+        Integer userId= createDailyPostRequest.getUserId();
+        Integer masterPostId= createDailyPostRequest.getMasterPostId();
+        String content= createDailyPostRequest.getContent();
+        if (!masterPostRepository.existsById(masterPostId)) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Master post does not exists"));
+        }
+        try {
+            MasterPost masterPost = masterPostRepository.findPostById(masterPostId);
+            if (!masterPost.getUserId().equals(userId)) {
+                return ResponseEntity.badRequest().body(new MessageResponse("User does not own this post"));
+            }
+            DailyPost dailyPost = new DailyPost();
+            dailyPost.setUserId(userId);
+            dailyPost.setMasterPost(masterPost);
+            dailyPost.setContent(content);
+            dailyPost.setCreatedAt(LocalDateTime.now());
+            dailyPostRepository.save(dailyPost);
+            return ResponseEntity.ok(new MessageResponse("Daily post created successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Could not create the daily post"));
+        }
+    }
+
+    public ResponseEntity<?> getDailyPostsByUserId(Integer userId) {
+        return ResponseEntity.ok(dailyPostRepository.findAllByUserId(userId));
+    }
+
+    public ResponseEntity<?> getDailyPostsByMasterPostId(Integer masterPostId) {
+        return ResponseEntity.ok(dailyPostRepository.findAllByMasterPostId(masterPostId));
     }
 }
