@@ -55,3 +55,9 @@ create table daily_post_comment
     constraint daily_post_comment_daily_post_daily_post_id_fk
         foreign key (daily_post_id) references daily_post (daily_post_id)
 );
+
+feed service
+notification service & kafka
+jwt
+unit & integration tests
+flyway & liquibase sql
