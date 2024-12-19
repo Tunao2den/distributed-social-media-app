@@ -12,7 +12,11 @@ import lombok.NoArgsConstructor;
 public class Follow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private int followerId;
-    private int followedId;
+    private long id;
+    @ManyToOne
+    @JoinColumn(name = "id")
+    private Users followerId;
+    @ManyToOne
+    private Users followedId;
+    private boolean isAccepted;
 }

@@ -3,7 +3,6 @@ package com.tuna.userservice.payload.request;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Getter
