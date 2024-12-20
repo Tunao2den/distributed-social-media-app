@@ -1,11 +1,14 @@
 package com.tuna.postservice.service;
 
 import com.tuna.postservice.model.entity.DailyPost;
+import com.tuna.postservice.model.entity.DailyPostComment;
 import com.tuna.postservice.model.entity.MasterPost;
 import com.tuna.postservice.model.entity.MasterPostCategory;
+import com.tuna.postservice.payload.request.CreateCommentRequest;
 import com.tuna.postservice.payload.request.CreateDailyPostRequest;
 import com.tuna.postservice.payload.request.CreateMasterPostRequest;
 import com.tuna.postservice.payload.response.MessageResponse;
+import com.tuna.postservice.repository.DailyPostCommentRepository;
 import com.tuna.postservice.repository.DailyPostRepository;
 import com.tuna.postservice.repository.MasterPostCategoryRepository;
 import com.tuna.postservice.repository.MasterPostRepository;
@@ -27,6 +30,9 @@ public class PostService {
 
     @Autowired
     private DailyPostRepository dailyPostRepository;
+
+    @Autowired
+    private DailyPostCommentRepository dailyPostCommentRepository;
 
     @Transactional
     public ResponseEntity<?> createMasterPostCategory(String postCategory) {
@@ -78,9 +84,9 @@ public class PostService {
     }
 
     public ResponseEntity<?> createDailyPost(CreateDailyPostRequest createDailyPostRequest) {
-        Integer userId= createDailyPostRequest.getUserId();
-        Integer masterPostId= createDailyPostRequest.getMasterPostId();
-        String content= createDailyPostRequest.getContent();
+        Integer userId = createDailyPostRequest.getUserId();
+        Integer masterPostId = createDailyPostRequest.getMasterPostId();
+        String content = createDailyPostRequest.getContent();
         if (!masterPostRepository.existsById(masterPostId)) {
             return ResponseEntity.badRequest().body(new MessageResponse("Master post does not exists"));
         }
@@ -107,5 +113,43 @@ public class PostService {
 
     public ResponseEntity<?> getDailyPostsByMasterPostId(Integer masterPostId) {
         return ResponseEntity.ok(dailyPostRepository.findAllByMasterPostId(masterPostId));
+    }
+
+    public ResponseEntity<?> createComment(CreateCommentRequest createCommentRequest) {
+        Integer userId = createCommentRequest.getUserId();
+        Integer dailyPostId = createCommentRequest.getDailyPostId();
+        String content = createCommentRequest.getContent();
+
+        if (!dailyPostRepository.existsById(dailyPostId)) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Daily post does not exits"));
+        }
+        try {
+            DailyPost dailyPost = dailyPostRepository.getReferenceById(dailyPostId);
+            DailyPostComment dailyPostComment = new DailyPostComment();
+            dailyPostComment.setUserId(userId);
+            dailyPostComment.setDailyPost(dailyPost);
+            dailyPostComment.setContent(content);
+            dailyPostComment.setCreatedAt(LocalDateTime.now());
+            dailyPostCommentRepository.save(dailyPostComment);
+            return ResponseEntity.ok(new MessageResponse("Comment created successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Could not create the comment"));
+        }
+    }
+
+    public ResponseEntity<?> getCommentsByDailyPost(Integer dailyPostId) {
+        try {
+            return ResponseEntity.ok(dailyPostCommentRepository.findAllByDailyPostId(dailyPostId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Could not get the comments"));
+        }
+    }
+
+    public ResponseEntity<?> getCommentById(Integer dailyPostCommentId) {
+        try {
+            return ResponseEntity.ok(dailyPostCommentRepository.findById(dailyPostCommentId).get());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Could not get the comment"));
+        }
     }
 }

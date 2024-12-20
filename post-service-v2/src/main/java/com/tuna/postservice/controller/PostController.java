@@ -1,11 +1,14 @@
 package com.tuna.postservice.controller;
 
+import com.tuna.postservice.payload.request.CreateCommentRequest;
 import com.tuna.postservice.payload.request.CreateDailyPostRequest;
 import com.tuna.postservice.payload.request.CreateMasterPostRequest;
 import com.tuna.postservice.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class PostController {
@@ -51,5 +54,20 @@ public class PostController {
     @GetMapping("/daily-posts-by-master-post")
     public ResponseEntity<?> getDailyPostsByMasterPostId(@RequestHeader Integer masterPostId) {
         return postService.getDailyPostsByMasterPostId(masterPostId);
+    }
+
+    @PostMapping("/comments")
+    public ResponseEntity<?> createComment(@RequestBody CreateCommentRequest createCommentRequest) {
+        return postService.createComment(createCommentRequest);
+    }
+
+    @GetMapping("/comments")
+    public ResponseEntity<?> getCommentsByPost(@RequestHeader Integer dailyPostId) {
+        return postService.getCommentsByDailyPost(dailyPostId);
+    }
+
+    @GetMapping("/comments/{dailyPostCommentId}")
+    public ResponseEntity<?> getCommentById(@PathVariable Integer dailyPostCommentId) {
+        return postService.getCommentById(dailyPostCommentId);
     }
 }
