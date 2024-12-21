@@ -1,10 +1,7 @@
 package com.tuna.usersservice.controller;
 
 import com.tuna.usersservice.model.entity.Users;
-import com.tuna.usersservice.payload.request.FollowUserRequest;
-import com.tuna.usersservice.payload.request.LoginRequest;
-import com.tuna.usersservice.payload.request.RegisterRequest;
-import com.tuna.usersservice.payload.request.UserInfoRequest;
+import com.tuna.usersservice.payload.request.*;
 import com.tuna.usersservice.service.UsersService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,5 +64,30 @@ public class UsersController {
     @GetMapping("/search")
     public ResponseEntity<?> searchUsers(@RequestParam String username) {
         return usersService.searchUsersByUsername(username);
+    }
+
+    @PostMapping("/switch-public-account")
+    public ResponseEntity<?> switchToPublicAccount(@RequestHeader Integer userId) {
+        return usersService.switchToPublicAccount(userId);
+    }
+
+    @PostMapping("/switch-private-account")
+    public ResponseEntity<?> switchToPrivateAccount(@RequestHeader Integer userId) {
+        return usersService.switchToPrivateAccount(userId);
+    }
+
+    @GetMapping("follow-requests")
+    public ResponseEntity<?> getFollowRequests(@RequestHeader Integer userId) {
+        return usersService.getFollowRequests(userId);
+    }
+
+    @PostMapping("/accept-follow-request")
+    public ResponseEntity<?> acceptFollowRequest(@RequestBody HandleFollowingRequest handleFollowingRequest) {
+        return usersService.acceptFollowRequest(handleFollowingRequest);
+    }
+
+    @PostMapping("/decline-follow-request")
+    public ResponseEntity<?> declineFollowRequest(@RequestBody HandleFollowingRequest handleFollowingRequest) {
+        return usersService.declineFollowRequest(handleFollowingRequest);
     }
 }

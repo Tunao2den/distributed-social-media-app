@@ -42,4 +42,6 @@ public class Users {
     @OneToMany(mappedBy = "followed", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<FollowUsers> followers;
+    @Column(name = "is_private")
+    private boolean isPrivate;
 }

@@ -21,4 +21,6 @@ public class FollowUsers {
     @JoinColumn(name = "followed_id")
     @ManyToOne
     private Users followed;
+    @Column(name = "is_request")
+    private boolean isRequest;
 }

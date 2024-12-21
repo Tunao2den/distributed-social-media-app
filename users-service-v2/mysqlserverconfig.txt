@@ -33,3 +33,9 @@ create table follow_users
     constraint follow_users_users_user_id_fk2
         foreign key (followed_id) references users (user_id)
 );
+
+alter table follow_users
+    add is_request tinyint(1) not null;
+
+    alter table users
+        add is_private tinyint(1) not null;

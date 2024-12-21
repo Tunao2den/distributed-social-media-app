@@ -3,10 +3,7 @@ package com.tuna.usersservice.service;
 import com.tuna.usersservice.model.dto.FollowingUserDTO;
 import com.tuna.usersservice.model.entity.FollowUsers;
 import com.tuna.usersservice.model.entity.Users;
-import com.tuna.usersservice.payload.request.FollowUserRequest;
-import com.tuna.usersservice.payload.request.LoginRequest;
-import com.tuna.usersservice.payload.request.RegisterRequest;
-import com.tuna.usersservice.payload.request.UserInfoRequest;
+import com.tuna.usersservice.payload.request.*;
 import com.tuna.usersservice.payload.response.LoginResponse;
 import com.tuna.usersservice.payload.response.MessageResponse;
 import com.tuna.usersservice.repository.FollowUsersRepository;
@@ -31,7 +28,7 @@ public class UsersService {
     private FollowUsersRepository followUsersRepository;
 
     public List<Users> getUsers() {
-        List<Users> users= usersRepository.findAll();
+        List<Users> users = usersRepository.findAll();
         if (users.isEmpty()) {
             throw new RuntimeException("Users not found");
         }
@@ -56,7 +53,7 @@ public class UsersService {
         if (usersRepository.existsByUserName(username)) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
         }
-        if(usersRepository.existsByEmail(email)){
+        if (usersRepository.existsByEmail(email)) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already taken!"));
         }
         // TODO: 12.12.2024 encode password(spring security)
@@ -68,6 +65,7 @@ public class UsersService {
         user.setPassword(password);
         user.setBirthDate(birthDate);
         user.setRegisteredAt(LocalDateTime.now());
+        user.setPrivate(false);
         usersRepository.save(user);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
@@ -83,22 +81,135 @@ public class UsersService {
         }
     }
 
+    public ResponseEntity<?> switchToPrivateAccount(Integer userId) {
+        Optional<Users> users = usersRepository.findById(userId);
+        if (users.isEmpty()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
+        }
+        if (users.get().isPrivate()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("This account is already private"));
+        }
+        try {
+            users.get().setPrivate(true);
+            usersRepository.save(users.get());
+            return ResponseEntity.ok(new MessageResponse("Account switched to private successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Could not update the isPrivate column to private"));
+        }
+    }
+
+    public ResponseEntity<?> switchToPublicAccount(Integer userId) {
+        Optional<Users> users = usersRepository.findById(userId);
+        if (users.isEmpty()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
+        }
+        if (!users.get().isPrivate()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("This account is already public"));
+        }
+        try {
+            users.get().setPrivate(false);
+            usersRepository.save(users.get());
+            return ResponseEntity.ok(new MessageResponse("Account switched to public successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Could not update the isPrivate column to public"));
+        }
+    }
+
     @Transactional
     public ResponseEntity<?> sendFollowRequest(FollowUserRequest followUserRequest) {
         Integer followerId = followUserRequest.getFollowerId();
         Integer followedId = followUserRequest.getFollowedId();
         Optional<Users> followerUser = usersRepository.findById(followerId);
         Optional<Users> followedUser = usersRepository.findById(followedId);
-        if (followUsersRepository.existsByFollowerIdAndFollowedId(followerId, followedId)) {
-            return ResponseEntity.badRequest().body(
-                    new MessageResponse(followerUser.get().getUserName() + " is already following " + followedUser.get().getUserName())
-            );
+        if (followerUser.isEmpty() || followedUser.isEmpty()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
         }
-        FollowUsers followUsers = new FollowUsers();
-        followUsers.setFollower(followerUser.orElseThrow(() -> new RuntimeException("Follower user not found")));
-        followUsers.setFollowed(followedUser.orElseThrow(() -> new RuntimeException("Follower user not found")));
-        followUsersRepository.save(followUsers);
-        return ResponseEntity.ok(new MessageResponse("User followed successfully"));
+        if (followUsersRepository.existsByFollowerIdAndFollowedId(followerId, followedId)) {
+            FollowUsers followUsers = followUsersRepository.findByFollowerIdAndFollowedId(followerId, followedId);
+            if (followUsers.isRequest()) {
+                return ResponseEntity.badRequest().body(new MessageResponse(followerUser.get().getUserName() + " is already sent follow request to " + followedUser.get().getUserName()));
+            } else {
+                return ResponseEntity.badRequest().body(new MessageResponse(followerUser.get().getUserName() + " is already following " + followedUser.get().getUserName()));
+            }
+        }
+        if (followedUser.get().isPrivate()) {
+            FollowUsers followUsers = new FollowUsers();
+            followUsers.setFollower(followerUser.orElseThrow(() -> new RuntimeException("Follower user not found")));
+            followUsers.setFollowed(followedUser.orElseThrow(() -> new RuntimeException("Follower user not found")));
+            followUsers.setRequest(true);
+            followUsersRepository.save(followUsers);
+            return ResponseEntity.ok(new MessageResponse("Follow request sent successfully"));
+        } else {
+            FollowUsers followUsers = new FollowUsers();
+            followUsers.setFollower(followerUser.orElseThrow(() -> new RuntimeException("Follower user not found")));
+            followUsers.setFollowed(followedUser.orElseThrow(() -> new RuntimeException("Follower user not found")));
+            followUsersRepository.save(followUsers);
+            return ResponseEntity.ok(new MessageResponse("User followed successfully"));
+        }
+    }
+
+    public ResponseEntity<?> getFollowRequests(Integer userId) {
+        Optional<Users> user = usersRepository.findById(userId);
+        if (user.isEmpty()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
+        }
+        try {
+            return ResponseEntity.ok(followUsersRepository.findAllByFollowedAndIsRequest(user.get(), true));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Could not fetch follow requests"));
+        }
+    }
+
+    public ResponseEntity<?> acceptFollowRequest(HandleFollowingRequest handleFollowingRequest) {
+        Integer followUsersId = handleFollowingRequest.getFollowUserId();
+        Integer userId = handleFollowingRequest.getUserId();
+        Optional<FollowUsers> followUsers = followUsersRepository.findById(followUsersId);
+        Optional<Users> user = usersRepository.findById(userId);
+        if (user.isEmpty()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
+        }
+        if (followUsers.isEmpty()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Follow request not found"));
+        }
+        if (!followUsers.get().isRequest()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Follow request already accepted"));
+        }
+        if (!followUsers.get().getFollowed().getId().equals(userId)) {
+            return ResponseEntity.badRequest().body(new MessageResponse("This user is not the receiver of this request"));
+        }
+        try {
+            followUsers.get().setRequest(false);
+            followUsersRepository.save(followUsers.get());
+            return ResponseEntity.ok(new MessageResponse("Follow request accepted"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Could not update isRequest column to false"));
+        }
+        // TODO: 21.12.2024 send notification to the request sender
+    }
+
+    public ResponseEntity<?> declineFollowRequest(HandleFollowingRequest handleFollowingRequest) {
+        Integer followUsersId = handleFollowingRequest.getFollowUserId();
+        Integer userId = handleFollowingRequest.getUserId();
+        Optional<FollowUsers> followUsers = followUsersRepository.findById(followUsersId);
+        Optional<Users> user = usersRepository.findById(userId);
+        if (user.isEmpty()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
+        }
+        if (followUsers.isEmpty()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Follow request not found"));
+        }
+        if (!followUsers.get().isRequest()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Follow request already accepted"));
+        }
+        if (!followUsers.get().getFollowed().getId().equals(userId)) {
+            return ResponseEntity.badRequest().body(new MessageResponse("This user is not the receiver of this request"));
+        }
+        try {
+            followUsersRepository.delete(followUsers.get());
+            return ResponseEntity.ok(new MessageResponse("Follow request declined"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Could not fetch follow requests"));
+        }
     }
 
     public ResponseEntity<?> getFollowers(UserInfoRequest userInfoRequest) {
@@ -107,6 +218,7 @@ public class UsersService {
             return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
         }
         return ResponseEntity.ok(usersRepository.findFollowersByUserId(userInfoRequest.getId()));
+        // TODO: 21.12.2024 update for isrequest
     }
 
     public ResponseEntity<?> getFollowedUsers(UserInfoRequest userInfoRequest) {
@@ -115,6 +227,8 @@ public class UsersService {
             return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
         }
         return ResponseEntity.ok(usersRepository.findFollowedUsersById(userInfoRequest.getId()));
+        // TODO: 21.12.2024 update for isrequest
+
     }
 
     public ResponseEntity<?> recommendUsers(UserInfoRequest userInfoRequest) {
