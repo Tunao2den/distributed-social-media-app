@@ -29,7 +29,6 @@ public interface FollowUsersRepository extends JpaRepository<FollowUsers, Intege
     List<Integer> findAlreadyFollowingUserIds(@Param("userId") Integer userId);
     @Query("select f " +
             "from FollowUsers f " +
-            "join Users u on u.id = f.follower.id and u.id = f.followed.id " +
             "where f.follower.id = :followerId " +
             "and f.followed.id = :followedId")
     FollowUsers findByFollowerIdAndFollowedId(Integer followerId, Integer followedId);
