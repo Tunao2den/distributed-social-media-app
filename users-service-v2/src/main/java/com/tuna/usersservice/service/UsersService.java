@@ -1,6 +1,7 @@
 package com.tuna.usersservice.service;
 
-import com.tuna.usersservice.model.dto.FollowingUserDTO;
+import com.tuna.usersservice.model.dto.FollowUsersDTO;
+import com.tuna.usersservice.model.dto.UsersDTO;
 import com.tuna.usersservice.model.entity.FollowUsers;
 import com.tuna.usersservice.model.entity.Users;
 import com.tuna.usersservice.payload.request.*;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -119,6 +121,9 @@ public class UsersService {
     public ResponseEntity<?> sendFollowRequest(FollowUserRequest followUserRequest) {
         Integer followerId = followUserRequest.getFollowerId();
         Integer followedId = followUserRequest.getFollowedId();
+        if (followerId.equals(followedId)) {
+            return ResponseEntity.badRequest().body(new MessageResponse("User can not send a follow request to itself"));
+        }
         Optional<Users> followerUser = usersRepository.findById(followerId);
         Optional<Users> followedUser = usersRepository.findById(followedId);
         if (followerUser.isEmpty() || followedUser.isEmpty()) {
@@ -154,7 +159,13 @@ public class UsersService {
             return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
         }
         try {
-            return ResponseEntity.ok(followUsersRepository.findAllByFollowedAndIsRequest(user.get(), true));
+            List<FollowUsers> followUsers = followUsersRepository.findAllByFollowedAndIsRequest(user.get(), true);
+            List<FollowUsersDTO> followUsersDTOS = new ArrayList<>();
+            for (FollowUsers followUser : followUsers) {
+                FollowUsersDTO followUsersDTO = new FollowUsersDTO();
+                followUsersDTOS.add(followUsersDTO.toFollowUsersDTO(followUser));
+            }
+            return ResponseEntity.ok(followUsersDTOS);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse("Could not fetch follow requests"));
         }
@@ -218,7 +229,6 @@ public class UsersService {
             return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
         }
         return ResponseEntity.ok(usersRepository.findFollowersByUserId(userInfoRequest.getId()));
-        // TODO: 21.12.2024 update for isrequest
     }
 
     public ResponseEntity<?> getFollowedUsers(UserInfoRequest userInfoRequest) {
@@ -227,8 +237,6 @@ public class UsersService {
             return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
         }
         return ResponseEntity.ok(usersRepository.findFollowedUsersById(userInfoRequest.getId()));
-        // TODO: 21.12.2024 update for isrequest
-
     }
 
     public ResponseEntity<?> recommendUsers(UserInfoRequest userInfoRequest) {
@@ -237,9 +245,9 @@ public class UsersService {
         List<Users> mutualFollowedUsersFollowings = followUsersRepository.findFollowedUsers(mutualFollowedIds);
         List<Integer> alreadyFollowingUserIds = followUsersRepository.findAlreadyFollowingUserIds(id);
 
-        List<FollowingUserDTO> recommendedUserDTOs = mutualFollowedUsersFollowings.stream()
+        List<UsersDTO> recommendedUserDTOs = mutualFollowedUsersFollowings.stream()
                 .filter(user -> !alreadyFollowingUserIds.contains(user.getId()) && !user.getId().equals(id))
-                .map(user -> new FollowingUserDTO(user.getId(), user.getUserName(), user.getFirstName(), user.getLastName()))
+                .map(user -> new UsersDTO(user.getId(), user.getUserName(), user.getFirstName(), user.getLastName()))
                 .toList();
 
         return ResponseEntity.ok(recommendedUserDTOs);

@@ -8,18 +8,18 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FollowingUserDTO {
+public class UsersDTO {
     private Integer id;
     private String userName;
     private String firstName;
     private String lastName;
 
-    public FollowingUserDTO toFollowingUserDTO(Users user) {
-        FollowingUserDTO followingUserDTO = new FollowingUserDTO();
-        followingUserDTO.setId(user.getId());
-        followingUserDTO.setUserName(user.getUserName());
-        followingUserDTO.setFirstName(user.getFirstName());
-        followingUserDTO.setLastName(user.getLastName());
-        return followingUserDTO;
+    public UsersDTO toFollowingUserDTO(Users user) {
+        UsersDTO usersDTO = new UsersDTO();
+        usersDTO.setId(user.getId());
+        usersDTO.setUserName(user.getUserName());
+        usersDTO.setFirstName(user.getFirstName());
+        usersDTO.setLastName(user.getLastName());
+        return usersDTO;
     }
 }
