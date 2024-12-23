@@ -3,6 +3,7 @@ package com.tuna.postservice.controller;
 import com.tuna.postservice.payload.request.CreateCommentRequest;
 import com.tuna.postservice.payload.request.CreateDailyPostRequest;
 import com.tuna.postservice.payload.request.CreateMasterPostRequest;
+import com.tuna.postservice.payload.request.LikePostRequest;
 import com.tuna.postservice.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -69,5 +70,20 @@ public class PostController {
     @GetMapping("/comments/{dailyPostCommentId}")
     public ResponseEntity<?> getCommentById(@PathVariable Integer dailyPostCommentId) {
         return postService.getCommentById(dailyPostCommentId);
+    }
+
+    @PostMapping("/like-daily-post")
+    public ResponseEntity<?> likeDailyPost(@RequestBody LikePostRequest likePostRequest) {
+        return postService.likeDailyPost(likePostRequest);
+    }
+
+    @DeleteMapping("/unlike-daily-post")
+    public ResponseEntity<?> unlikeDailyPost(@RequestBody LikePostRequest likePostRequest) {
+        return postService.unlikeDailyPost(likePostRequest);
+    }
+
+    @GetMapping("/like-details")
+    public ResponseEntity<?> getLikesDetails(@RequestHeader Integer dailyPostId) {
+        return postService.getLikesOfDailyPost(dailyPostId);
     }
 }

@@ -56,6 +56,20 @@ create table daily_post_comment
         foreign key (daily_post_id) references daily_post (daily_post_id)
 );
 
+create table daily_post_like
+(
+    daily_post_like_id bigint auto_increment,
+    user_id               bigint    not null,
+    daily_post_id         bigint    not null,
+    created_at            timestamp not null,
+    constraint daily_post_comment_pk
+        primary key (daily_post_comment_id),
+    constraint daily_post_comment_daily_post_daily_post_id_fk
+        foreign key (daily_post_id) references daily_post (daily_post_id)
+);
+
+
+
 feed service
 notification service & kafka
 jwt

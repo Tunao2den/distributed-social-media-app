@@ -1,23 +1,22 @@
 package com.tuna.postservice.service;
 
-import com.tuna.postservice.model.entity.DailyPost;
-import com.tuna.postservice.model.entity.DailyPostComment;
-import com.tuna.postservice.model.entity.MasterPost;
-import com.tuna.postservice.model.entity.MasterPostCategory;
+import com.tuna.postservice.model.entity.*;
 import com.tuna.postservice.payload.request.CreateCommentRequest;
 import com.tuna.postservice.payload.request.CreateDailyPostRequest;
 import com.tuna.postservice.payload.request.CreateMasterPostRequest;
+import com.tuna.postservice.payload.request.LikePostRequest;
+import com.tuna.postservice.payload.response.LikeDetailsResponse;
 import com.tuna.postservice.payload.response.MessageResponse;
-import com.tuna.postservice.repository.DailyPostCommentRepository;
-import com.tuna.postservice.repository.DailyPostRepository;
-import com.tuna.postservice.repository.MasterPostCategoryRepository;
-import com.tuna.postservice.repository.MasterPostRepository;
+import com.tuna.postservice.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostService {
@@ -33,6 +32,9 @@ public class PostService {
 
     @Autowired
     private DailyPostCommentRepository dailyPostCommentRepository;
+
+    @Autowired
+    private DailyPostLikeRepository dailyPostLikeRepository;
 
     @Transactional
     public ResponseEntity<?> createMasterPostCategory(String postCategory) {
@@ -83,6 +85,7 @@ public class PostService {
         return ResponseEntity.ok(masterPostRepository.findPostById(id));
     }
 
+    @Transactional
     public ResponseEntity<?> createDailyPost(CreateDailyPostRequest createDailyPostRequest) {
         Integer userId = createDailyPostRequest.getUserId();
         Integer masterPostId = createDailyPostRequest.getMasterPostId();
@@ -115,6 +118,7 @@ public class PostService {
         return ResponseEntity.ok(dailyPostRepository.findAllByMasterPostId(masterPostId));
     }
 
+    @Transactional
     public ResponseEntity<?> createComment(CreateCommentRequest createCommentRequest) {
         Integer userId = createCommentRequest.getUserId();
         Integer dailyPostId = createCommentRequest.getDailyPostId();
@@ -150,6 +154,67 @@ public class PostService {
             return ResponseEntity.ok(dailyPostCommentRepository.findById(dailyPostCommentId).get());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse("Could not get the comment"));
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<?> likeDailyPost(LikePostRequest likePostRequest) {
+        Integer userId = likePostRequest.getUserId();
+        Integer dailyPostId = likePostRequest.getDailyPostId();
+        Optional<DailyPost> dailyPost = dailyPostRepository.findById(dailyPostId);
+        if (dailyPost.isEmpty()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Post does not exits"));
+        }
+        if (dailyPostLikeRepository.existsByDailyPostAndUserId(dailyPost.get(), userId)) {
+            return ResponseEntity.badRequest().body(new MessageResponse("User already liked the post"));
+        }
+        try {
+            DailyPostLike dailyPostLike = new DailyPostLike();
+            dailyPostLike.setUserId(userId);
+            dailyPostLike.setDailyPost(dailyPost.get());
+            dailyPostLike.setCreatedAt(LocalDateTime.now());
+            dailyPostLikeRepository.save(dailyPostLike);
+            return ResponseEntity.ok(new MessageResponse("Post liked successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Could not save the like"));
+        }
+        // TODO: 23.12.2024 send notification to post owner
+    }
+
+    public ResponseEntity<?> getLikesOfDailyPost(Integer dailyPostId) {
+        Optional<DailyPost> dailyPost = dailyPostRepository.findById(dailyPostId);
+        if (dailyPost.isEmpty()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Post does not exits"));
+        }
+        try {
+            List<DailyPostLike> dailyPostLikes = dailyPostLikeRepository.findAllByDailyPost(dailyPost.get());
+            List<Integer> userIds = new ArrayList<>();
+            for (DailyPostLike dailyPostLike : dailyPostLikes) {
+                userIds.add(dailyPostLike.getUserId());
+            }
+            LikeDetailsResponse likeDetailsResponse = new LikeDetailsResponse();
+            likeDetailsResponse.setUserIds(userIds);
+            likeDetailsResponse.setLikeCount(userIds.size());
+            return ResponseEntity.ok(likeDetailsResponse);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Could not get the like credentials"));
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<?> unlikeDailyPost(LikePostRequest likePostRequest) {
+        Integer userId = likePostRequest.getUserId();
+        Integer dailyPostId = likePostRequest.getDailyPostId();
+        Optional<DailyPost> dailyPost = dailyPostRepository.findById(dailyPostId);
+        if (dailyPost.isEmpty()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Post does not exits"));
+        }
+        try {
+            DailyPostLike dailyPostLike = dailyPostLikeRepository.findByDailyPostAndUserId(dailyPost.get(), userId);
+            dailyPostLikeRepository.delete(dailyPostLike);
+            return ResponseEntity.ok(new MessageResponse("Post unliked successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Could not save the unlike"));
         }
     }
 }
