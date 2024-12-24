@@ -1,4 +1,4 @@
-package com.tuna.usersservice.payload.response;
+package com.tuna.feed_service.payload.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
