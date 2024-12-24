@@ -11,6 +11,7 @@ import com.tuna.usersservice.repository.FollowUsersRepository;
 import com.tuna.usersservice.repository.UsersRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -204,7 +205,7 @@ public class UsersService {
         Optional<FollowUsers> followUsers = followUsersRepository.findById(followUsersId);
         Optional<Users> user = usersRepository.findById(userId);
         if (user.isEmpty()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("User not found"));
         }
         if (followUsers.isEmpty()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Follow request not found"));
@@ -226,17 +227,17 @@ public class UsersService {
     public ResponseEntity<?> getFollowers(UserInfoRequest userInfoRequest) {
         Optional<Users> users = usersRepository.findById(userInfoRequest.getId());
         if (users.isEmpty()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("User not found"));
         }
         return ResponseEntity.ok(usersRepository.findFollowersByUserId(userInfoRequest.getId()));
     }
 
-    public ResponseEntity<?> getFollowedUsers(UserInfoRequest userInfoRequest) {
-        Optional<Users> users = usersRepository.findById(userInfoRequest.getId());
+    public ResponseEntity<?> getFollowedUsers(Integer userId) {
+        Optional<Users> users = usersRepository.findById(userId);
         if (users.isEmpty()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("User not found"));
         }
-        return ResponseEntity.ok(usersRepository.findFollowedUsersById(userInfoRequest.getId()));
+        return ResponseEntity.ok(usersRepository.findFollowedUsersById(userId));
     }
 
     public ResponseEntity<?> recommendUsers(UserInfoRequest userInfoRequest) {
