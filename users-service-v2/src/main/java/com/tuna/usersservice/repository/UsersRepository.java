@@ -1,5 +1,6 @@
 package com.tuna.usersservice.repository;
 
+import com.tuna.usersservice.model.dto.UserFollowerCountDTO;
 import com.tuna.usersservice.model.dto.UsersDTO;
 import com.tuna.usersservice.model.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,4 +28,12 @@ public interface UsersRepository extends JpaRepository<Users, Integer> {
             "from Users u " +
             "where u.userName like %:username%")
     List<UsersDTO> searchByUserName(String username);
+    @Query(value = "SELECT u.user_id, COUNT(f.followed_id) AS follower_count " +
+            "FROM users u " +
+            "LEFT JOIN follow_users f ON u.user_id = f.followed_id " +
+            "WHERE u.is_private = false and f.is_request = false " +
+            "GROUP BY u.user_id " +
+            "ORDER BY RAND() " +
+            "LIMIT 100", nativeQuery = true)
+    List<Object[]> findRandomPublicUsersWithFollowerCount();
 }
