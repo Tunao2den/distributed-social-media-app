@@ -1,4 +1,4 @@
-package com.tuna.feed_service.payload.request;
+package com.tuna.postservice.payload.request;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
