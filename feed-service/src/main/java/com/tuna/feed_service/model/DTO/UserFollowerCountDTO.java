@@ -1,4 +1,4 @@
-package com.tuna.usersservice.model.dto;
+package com.tuna.feed_service.model.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
