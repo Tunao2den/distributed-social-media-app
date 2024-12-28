@@ -14,7 +14,7 @@ public class NotificationEntity {
     @Id
     private String id;
     private String receiverId; //notification owner
-    private String senderId; //notification owner
+    private String senderId; //notification sender
     private String message; //notification information
     private boolean isViewed;
     private LocalDateTime timestamp;
