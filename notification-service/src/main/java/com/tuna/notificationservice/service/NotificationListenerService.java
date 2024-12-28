@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 import static com.tuna.notificationservice.configuration.KafkaConfiguration.GROUP_ID;
-import static com.tuna.notificationservice.constants.TopicConstants.REQUEST_ACCEPTED;
-import static com.tuna.notificationservice.constants.TopicConstants.SENT_FOLLOW_REQUEST;
+import static com.tuna.notificationservice.constants.TopicConstants.*;
 
 @Service
 public class NotificationListenerService {
@@ -31,6 +30,11 @@ public class NotificationListenerService {
 
     @KafkaListener(topics = REQUEST_ACCEPTED, groupId = GROUP_ID, containerFactory = "userKafkaListenerFactory")
     public void createAcceptRequestNotification(String data) throws JsonProcessingException {
+        notificationMapper(data);
+    }
+
+    @KafkaListener(topics = POST_LIKED, groupId = GROUP_ID, containerFactory = "userKafkaListenerFactory")
+    public void createPostLikedNotification(String data) throws JsonProcessingException {
         notificationMapper(data);
     }
 
