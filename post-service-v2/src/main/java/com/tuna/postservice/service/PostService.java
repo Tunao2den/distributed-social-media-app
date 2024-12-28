@@ -1,5 +1,7 @@
 package com.tuna.postservice.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tuna.postservice.model.data.NotificationData;
 import com.tuna.postservice.model.entity.*;
 import com.tuna.postservice.payload.request.CreateCommentRequest;
 import com.tuna.postservice.payload.request.CreateDailyPostRequest;
@@ -11,12 +13,15 @@ import com.tuna.postservice.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.tuna.postservice.constants.TopicConstants.POST_LIKED;
 
 @Service
 public class PostService {
@@ -35,6 +40,12 @@ public class PostService {
 
     @Autowired
     private DailyPostLikeRepository dailyPostLikeRepository;
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Transactional
     public ResponseEntity<?> createMasterPostCategory(String postCategory) {
@@ -174,11 +185,17 @@ public class PostService {
             dailyPostLike.setDailyPost(dailyPost.get());
             dailyPostLike.setCreatedAt(LocalDateTime.now());
             dailyPostLikeRepository.save(dailyPostLike);
+
+            NotificationData notificationData = new NotificationData();
+            notificationData.setReceiverId(dailyPost.get().getUserId().toString());
+            notificationData.setSenderId(userId.toString());
+            notificationData.setMessage(likePostRequest.getUserName() + " liked your post: " + dailyPost.get().getContent());
+            kafkaTemplate.send(POST_LIKED, objectMapper.writeValueAsString(notificationData));
+
             return ResponseEntity.ok(new MessageResponse("Post liked successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse("Could not save the like"));
         }
-        // TODO: 23.12.2024 send notification to post owner
     }
 
     public ResponseEntity<?> getLikesOfDailyPost(Integer dailyPostId) {

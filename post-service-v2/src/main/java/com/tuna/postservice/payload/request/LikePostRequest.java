@@ -9,5 +9,6 @@ import lombok.Setter;
 @Setter
 public class LikePostRequest {
     private Integer userId;
+    private String userName;
     private Integer dailyPostId;
 }

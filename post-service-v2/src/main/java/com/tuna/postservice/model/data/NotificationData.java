@@ -1,4 +1,4 @@
-package com.tuna.notificationservice.model.data;
+package com.tuna.postservice.model.data;
 
 import lombok.Data;
 import lombok.Getter;
