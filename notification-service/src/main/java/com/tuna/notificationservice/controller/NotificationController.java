@@ -1,6 +1,6 @@
 package com.tuna.notificationservice.controller;
 
-import com.tuna.notificationservice.service.NotificationService;
+import com.tuna.notificationservice.service.NotificationListenerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,11 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class NotificationController {
 
     @Autowired
-    NotificationService notificationService;
+    NotificationListenerService notificationListenerService;
 
     @GetMapping("/")
     public ResponseEntity<?> test() {
-        notificationService.createNotification();
         return ResponseEntity.ok("success");
     }
 }
