@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.tuna.usersservice.constants.TopicConstants.REQUEST_ACCEPTED;
 import static com.tuna.usersservice.constants.TopicConstants.SENT_FOLLOW_REQUEST;
 
 @Service
@@ -213,11 +214,18 @@ public class UsersService {
         try {
             followUsers.get().setRequest(false);
             followUsersRepository.save(followUsers.get());
+
+            NotificationData notificationData = new NotificationData();
+            notificationData.setSenderId(followUsers.get().getFollowed().getId().toString());
+            notificationData.setReceiverId(followUsers.get().getFollower().getId().toString());
+            notificationData.setMessage(followUsers.get().getFollowed().getUserName() + " accepted your follow request");
+            String data = objectMapper.writeValueAsString(notificationData);
+            kafkaTemplate.send(REQUEST_ACCEPTED,data);
+
             return ResponseEntity.ok(new MessageResponse("Follow request accepted"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse("Could not update isRequest column to false"));
         }
-        // TODO: 21.12.2024 send notification to the request sender
     }
 
     public ResponseEntity<?> declineFollowRequest(HandleFollowingRequest handleFollowingRequest) {
