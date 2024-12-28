@@ -1,5 +1,8 @@
 package com.tuna.usersservice.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tuna.usersservice.model.data.NotificationData;
 import com.tuna.usersservice.model.dto.FollowUsersDTO;
 import com.tuna.usersservice.model.dto.UsersDTO;
 import com.tuna.usersservice.model.entity.FollowUsers;
@@ -13,6 +16,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,14 +25,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.tuna.usersservice.constants.TopicConstants.SENT_FOLLOW_REQUEST;
+
 @Service
 public class UsersService {
 
     @Autowired
-    UsersRepository usersRepository;
+    private UsersRepository usersRepository;
 
     @Autowired
     private FollowUsersRepository followUsersRepository;
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    @Autowired
+    ObjectMapper objectMapper;
+
 
     public List<Users> getUsers() {
         List<Users> users = usersRepository.findAll();
@@ -119,7 +132,7 @@ public class UsersService {
     }
 
     @Transactional
-    public ResponseEntity<?> sendFollowRequest(FollowUserRequest followUserRequest) {
+    public ResponseEntity<?> sendFollowRequest(FollowUserRequest followUserRequest) throws JsonProcessingException {
         Integer followerId = followUserRequest.getFollowerId();
         Integer followedId = followUserRequest.getFollowedId();
         if (followerId.equals(followedId)) {
@@ -144,6 +157,14 @@ public class UsersService {
             followUsers.setFollowed(followedUser.orElseThrow(() -> new RuntimeException("Follower user not found")));
             followUsers.setRequest(true);
             followUsersRepository.save(followUsers);
+
+            NotificationData notificationData = new NotificationData();
+            notificationData.setSenderId(followerId.toString());
+            notificationData.setReceiverId(followedId.toString());
+            notificationData.setMessage(followerUser.get().getUserName() + " has requested to follow you");
+            String data = objectMapper.writeValueAsString(notificationData);
+            kafkaTemplate.send(SENT_FOLLOW_REQUEST,data);
+
             return ResponseEntity.ok(new MessageResponse("Follow request sent successfully"));
         } else {
             FollowUsers followUsers = new FollowUsers();

@@ -1,5 +1,6 @@
 package com.tuna.usersservice.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tuna.usersservice.model.entity.Users;
 import com.tuna.usersservice.payload.request.*;
 import com.tuna.usersservice.service.UsersService;
@@ -43,7 +44,7 @@ public class UsersController {
     }
 
     @PostMapping("/follow-user")
-    public ResponseEntity<?> follow(@Valid @RequestBody FollowUserRequest followUserRequest) {
+    public ResponseEntity<?> follow(@Valid @RequestBody FollowUserRequest followUserRequest) throws JsonProcessingException {
         return usersService.sendFollowRequest(followUserRequest);
     }
 
