@@ -1,0 +1,20 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: users-service-v2
+          uri: lb://users-service-v2
+          predicates:
+            - Path=/users-service-v2/**
+        - id: post-service-v2
+          uri: lb://post-service-v2
+          predicates:
+            - Path=/post-service-v2/**
+        - id: feed-service
+          uri: lb://feed-service
+          predicates:
+            - Path=/feed-service/**
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/notification-service/**
