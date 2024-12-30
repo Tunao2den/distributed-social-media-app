@@ -24,7 +24,8 @@ public class FeedService {
      * @param userId owner of the feed
      */
     public ResponseEntity<?> createFriendsFeed(Integer userId) {
-        String url = "http://localhost:8100/followed?userId={userId}";
+//        String url = "http://localhost:8100/followed?userId={userId}";
+        String url = "http://users-service-v2/followed?userId={userId}";
 
         ResponseEntity<List<UsersDTO>> response = restTemplate.exchange(
                 url,
@@ -41,7 +42,8 @@ public class FeedService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Could not get the followings"));
         }
 
-        String postServiceUrl = "http://localhost:8200/daily-posts-by-user";
+//        String postServiceUrl = "http://localhost:8200/daily-posts-by-user";
+        String postServiceUrl = "http://post-service-v2/daily-posts-by-user";
         List<DailyPostDTO> dailyPosts = new ArrayList<>();
         HttpHeaders headers = new HttpHeaders();
 

@@ -28,7 +28,9 @@ public class DiscoverFeedService {
     public ResponseEntity<?> createDiscoverFeed(Integer userId) {
 
         //random public userların idlerini ve kullanıcı sayılarını topla
-        String USER_SERVICE_URL = "http://localhost:8100/users-and-followers";
+
+//        String USER_SERVICE_URL = "http://localhost:8100/users-and-followers";
+        String USER_SERVICE_URL = "http://users-service-v2/users-and-followers";
         ResponseEntity<List<UserFollowerCountDTO>> userFollowerCountResponseEntity = restTemplate.exchange(
                 USER_SERVICE_URL,
                 HttpMethod.GET,
@@ -51,7 +53,8 @@ public class DiscoverFeedService {
         userAndPublicUsersInfoRequest.setUserId(userId);
         userAndPublicUsersInfoRequest.setPublicUserIds(publicUserIds);
 
-        String postsServiceUrl = "http://localhost:8200/generate-discover-feed";
+//        String postsServiceUrl = "http://localhost:8200/generate-discover-feed";
+        String postsServiceUrl = "http://post-service-v2/generate-discover-feed";
 
         HttpEntity<UserAndPublicUsersInfoRequest> requestEntity = new HttpEntity<>(userAndPublicUsersInfoRequest);
 
