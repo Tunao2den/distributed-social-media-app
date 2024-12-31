@@ -90,11 +90,14 @@ public class UsersService {
     public ResponseEntity<?> loginUser(LoginRequest loginRequest) {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
-        Users user = usersRepository.findUsersByUserNameAndPassword(username, password);
-        if (user != null) {
+        try {
+            Users user = usersRepository.findUsersByUserNameAndPassword(username, password);
+            if (user == null) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Invalid username or password"));
+            }
             return ResponseEntity.ok(new LoginResponse(user.getId(), user.getUserName()));
-        } else {
-            return ResponseEntity.ok(new MessageResponse("Login failed!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Invalid username or password"));
         }
     }
 

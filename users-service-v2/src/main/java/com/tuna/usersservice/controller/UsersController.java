@@ -38,6 +38,7 @@ public class UsersController {
         return usersService.registerUser(registerRequest);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         return usersService.loginUser(loginRequest);
