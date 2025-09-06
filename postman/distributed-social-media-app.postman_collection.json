@@ -1,0 +1,680 @@
+{
+	"info": {
+		"_postman_id": "27e0c84f-d30b-4410-bb52-b4d9094cd724",
+		"name": "distributed-social-media-app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "28376219"
+	},
+	"item": [
+		{
+			"name": "users-service-v2",
+			"item": [
+				{
+					"name": "helloworld",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseURL}}/users-service-v2/"
+					},
+					"response": []
+				},
+				{
+					"name": "get all users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseURL}}/users-service-v2/users"
+					},
+					"response": []
+				},
+				{
+					"name": "get user by username",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseURL}}/users-service-v2/users/tunaoz"
+					},
+					"response": []
+				},
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"tuna\",\r\n    \"lastName\": \"ozden\",\r\n    \"username\": \"tunaoz\",\r\n    \"email\": \"tunaoz@gmail.com\",\r\n    \"password\": \"secure123\",\r\n    \"birthDate\": \"2000-01-01\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/users-service-v2/register"
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"tunaoz\",\r\n  \"password\": \"secure123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/users-service-v2/login"
+					},
+					"response": []
+				},
+				{
+					"name": "follow user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"followerId\": \"5\",\r\n  \"followedId\": \"3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/users-service-v2/follow-user"
+					},
+					"response": []
+				},
+				{
+					"name": "followers",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"2\",\r\n  \"userName\": \"tunaoz\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/users-service-v2/followers"
+					},
+					"response": []
+				},
+				{
+					"name": "followed users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users-service-v2/followed?userId=2",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users-service-v2",
+								"followed"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "follow recommendations",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"4\",\r\n  \"userName\": \"secoz\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/users-service-v2/recommendations"
+					},
+					"response": []
+				},
+				{
+					"name": "search",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"4\",\r\n  \"userName\": \"tunaoz\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/users-service-v2/search?username=tuna",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users-service-v2",
+								"search"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "tuna"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "switchToPublicAccount",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "userId",
+								"value": "2",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/users-service-v2/switch-public-account"
+					},
+					"response": []
+				},
+				{
+					"name": "switchTo private Account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "userId",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/users-service-v2/switch-private-account"
+					},
+					"response": []
+				},
+				{
+					"name": "getFollowRequests",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "userId",
+								"value": "2",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"4\",\r\n  \"userName\": \"tunaoz\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/users-service-v2/follow-requests"
+					},
+					"response": []
+				},
+				{
+					"name": "acceptFollowRequest",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"followUserId\": \"13\",\r\n  \"userId\": \"3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/users-service-v2/accept-follow-request"
+					},
+					"response": []
+				},
+				{
+					"name": "declineFollowRequest",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"followUserId\": \"17\",\r\n  \"userId\": \"4\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/users-service-v2/decline-follow-request"
+					},
+					"response": []
+				},
+				{
+					"name": "findPublicFollowerWithFollowerCounts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseURL}}/users-service-v2/users-and-followers"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "posts-service-v2",
+			"item": [
+				{
+					"name": "get master post categories Copy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseURL}}/post-service-v2/master-post-categories"
+					},
+					"response": []
+				},
+				{
+					"name": "create master post category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "postCategory",
+								"value": "hiking",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/post-service-v2/master-post-categories"
+					},
+					"response": []
+				},
+				{
+					"name": "getmaster post by userid",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "userId",
+								"value": "4",
+								"type": "text"
+							}
+						],
+						"url": "{{baseURL}}/post-service-v2/master-posts"
+					},
+					"response": []
+				},
+				{
+					"name": "create master post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\":  \"1\",\r\n    \"masterPostCategoryId\": \"1\",\r\n    \"content\": \"I have visited the Madeira island!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/post-service-v2/master-posts"
+					},
+					"response": []
+				},
+				{
+					"name": "get master post by postId",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "userId",
+								"value": "5",
+								"type": "text"
+							}
+						],
+						"url": "{{baseURL}}/post-service-v2/master-posts/1"
+					},
+					"response": []
+				},
+				{
+					"name": "get daily posts by user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "userId",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": "{{baseURL}}/post-service-v2/daily-posts-by-user"
+					},
+					"response": []
+				},
+				{
+					"name": "get daily posts by master post",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "masterPostId",
+								"value": "5",
+								"type": "text"
+							}
+						],
+						"url": "{{baseURL}}/post-service-v2/daily-posts-by-master-post"
+					},
+					"response": []
+				},
+				{
+					"name": "create daily post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "userId",
+								"value": "5",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"4\",\r\n    \"masterPostId\": \"7\",\r\n    \"content\": \"lorem ipsum\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/post-service-v2/daily-posts"
+					},
+					"response": []
+				},
+				{
+					"name": "create daily post comment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "userId",
+								"value": "5",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"6\",\r\n    \"dailyPostId\": \"8\",\r\n    \"content\": \"lorem ipsum\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/post-service-v2/comments"
+					},
+					"response": []
+				},
+				{
+					"name": "get post comments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "dailyPostId",
+								"value": "4",
+								"type": "text"
+							}
+						],
+						"url": "{{baseURL}}/post-service-v2/comments"
+					},
+					"response": []
+				},
+				{
+					"name": "get comment by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseURL}}/post-service-v2/comments/6"
+					},
+					"response": []
+				},
+				{
+					"name": "like daily post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"6\",\r\n    \"userName\": \"tuna\",\r\n    \"dailyPostId\": \"8\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/post-service-v2/like-daily-post"
+					},
+					"response": []
+				},
+				{
+					"name": "unlike daily post",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"6\",\r\n    \"userName\": \"tuna\",\r\n    \"dailyPostId\": \"8\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/post-service-v2/unlike-daily-post"
+					},
+					"response": []
+				},
+				{
+					"name": "like details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "dailyPostId",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": "{{baseURL}}/post-service-v2/like-details"
+					},
+					"response": []
+				},
+				{
+					"name": "generateDiscoverFeed",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "dailyPostId",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": 4,\r\n  \"publicUserIds\": [3, 5, 6,7,8,9,10]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/post-service-v2/generate-discover-feed"
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"pm.environment.get(\"variable_key\");"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "feed service",
+			"item": [
+				{
+					"name": "createFriendsFeed",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/feed-service/feed/friends?userId=1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"feed-service",
+								"feed",
+								"friends"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "discover feed",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/feed-service/feed/discover?userId=1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"feed-service",
+								"feed",
+								"discover"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "notification service",
+			"item": [
+				{
+					"name": "get notoficaiton",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseURL}}/notification-service/notifications/2"
+					},
+					"response": []
+				}
+			],
+			"description": "notification-service"
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
