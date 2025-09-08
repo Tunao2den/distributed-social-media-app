@@ -23,7 +23,7 @@ distributed-social-media-app
 ├── registry-service-v2
 ├── postman
 ├── docker-compose.yml
-└── README.md # Project documentation
+└── README.md
 ```
 
 
@@ -48,6 +48,12 @@ For now the project consists of 6 microservices:
 ### Databases
 - **MySql**: Used for User Service, Post Service to store user and post data.
 - **MongoDB**: Used for Notification Service to store notification data.
+
+### Message Broker
+- **Kafka**: Used for asynchronous communication between services, such as sending notifications when a user like a post or a make a comment.
+
+### Containerization
+- **Docker**: Each microservice is containerized using Docker, allowing for easy deployment and scalability. All services are orchestrated using Docker Compose.
 
 ## Setup
 
@@ -93,7 +99,7 @@ You can test the APIs using the provided **Postman collection**.
 
 **Base URL:** `http://localhost:8765`
 
-#### Request Format
+#### Request Body
 
 ```json
 {
@@ -106,22 +112,7 @@ You can test the APIs using the provided **Postman collection**.
 }
 ```
 
-#### Example Request
-
-```bash
-curl -X POST http://localhost:8765/users-service-v2/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "firstName": "tuna",
-    "lastName": "ozden",
-    "username": "tunaoz",
-    "email": "tunaoz@gmail.com",
-    "password": "secure123",
-    "birthDate": "2000-01-01"
-  }'
-```
-
-#### Success Response
+#### Response
 
 **Status Code:** `200 OK`
 
